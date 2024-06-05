@@ -93,25 +93,25 @@ DATABASES = {
 
 # Email settings
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.Emailbackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = '587'
-# EMAIL_HOST_USER = 'pwaniunionmall@gmail.com'
-# EMAIL_HOST_PASSWORD = 'tjliabrzskgmawyk '
-# EMAIL_USE_TLS = True
-# EMAIL_USE_SSL = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.Emailbackend'
+EMAIL_HOST = 'EMAIL_HOST'
+EMAIL_PORT = 'EMAIL_PORT'
+EMAIL_HOST_USER = 'EMAIL_HOST_USER'
+EMAIL_HOST_PASSWORD = 'EMAIL_HOST_PASSWORD'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = True
 
-EMAIL_BACKEND = 'django_ses.SESBackend' 
-DEFAULT_FROM_EMAIL = getenv('AWS_SES_FROM_EMAIL')
+# EMAIL_BACKEND = 'django_ses.SESBackend' 
+# DEFAULT_FROM_EMAIL = getenv('AWS_SES_FROM_EMAIL')
 
 
-AWS_SES_ACCESS_KEY_ID = 'AWS_SES_ACCESS_KEY_ID'
-AWS_SES_SECRET_ACCESS_KEY = 'AWS_SES_SECRET_ACCESS_KEY'
-AWS_SES_REGION_NAME = 'AWS_SES_REGION_NAME'
-AWS_SES_REGION_ENDPOINT = f'email.{AWS_SES_REGION_NAME}.amazonaws.com'
-AWS_SES_FROM_EMAIL = getenv('AWS_SES_FROM_EMAIL')
+# AWS_SES_ACCESS_KEY_ID = 'AWS_SES_ACCESS_KEY_ID'
+# AWS_SES_SECRET_ACCESS_KEY = 'AWS_SES_SECRET_ACCESS_KEY'
+# AWS_SES_REGION_NAME = 'AWS_SES_REGION_NAME'
+# AWS_SES_REGION_ENDPOINT = f'email.{AWS_SES_REGION_NAME}.amazonaws.com'
+# AWS_SES_FROM_EMAIL = getenv('AWS_SES_FROM_EMAIL')
 
-USE_SES_V2 = True
+# USE_SES_V2 = True
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
