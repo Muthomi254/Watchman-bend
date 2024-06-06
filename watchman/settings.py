@@ -14,6 +14,7 @@ from os import getenv, path
 from pathlib import Path
 from django.core.management.utils import get_random_secret_key
 import dotenv
+from decouple import config
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -93,13 +94,14 @@ DATABASES = {
 
 # Email settings
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.Emailbackend'
-EMAIL_HOST = 'EMAIL_HOST'
-EMAIL_PORT = 'EMAIL_PORT'
-EMAIL_HOST_USER = 'EMAIL_HOST_USER'
-EMAIL_HOST_PASSWORD = 'EMAIL_HOST_PASSWORD'
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # EMAIL_BACKEND = 'django_ses.SESBackend' 
 # DEFAULT_FROM_EMAIL = getenv('AWS_SES_FROM_EMAIL')
@@ -157,10 +159,13 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES':[
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-       'DEFAULT_PERMISSION_CLASSES': [
+    'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
     ]
 }
+
+
+
 
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password-reset/{uid}/{token}',
