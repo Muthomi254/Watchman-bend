@@ -6,6 +6,7 @@ certifi==2024.6.2
 cffi==1.16.0
 charset-normalizer==3.3.2
 cryptography==42.0.8
+decouple==0.0.7
 defusedxml==0.8.0rc2
 dill==0.3.8
 Django==5.0.6
@@ -25,6 +26,7 @@ pycparser==2.22
 PyJWT==2.8.0
 pylint==3.2.2
 python-dateutil==2.9.0.post0
+python-decouple==3.8
 python-dotenv==1.0.1
 python3-openid==3.2.0
 pytz==2024.1
