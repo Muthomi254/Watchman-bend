@@ -106,7 +106,7 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-DOMAIN = config('DOMAIN')
+DOMAIN = getenv('DOMAIN')
 SITE_NAME = 'WatchMan'
 
 # EMAIL_BACKEND = 'django_ses.SESBackend' 
@@ -162,6 +162,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 
 AUTHENTICATION_BACKENDS = [
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
@@ -172,12 +174,9 @@ REST_FRAMEWORK = {
         'users.authentication.CustomJWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated'
+        'rest_framework.permissions.IsAuthenticated',
     ]
 }
-
-
-
 
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password-reset/{uid}/{token}',
@@ -186,17 +185,37 @@ DJOSER = {
     'USER_CREATE_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'TOKEN_MODEL': None, 
+    'SOCIAL_AUTH_ALLOWED_REDIRECT_URLS': getenv('REDIRECT_URLS').split(',')
 }
 
 AUTH_COOKIE = 'access'
 AUTH_COOKIE_ACCESS_MAX_AGE = 60 * 5
 AUTH_COOKIE_REFRESH_MAX_AGE = 60 * 60 * 24
-AUTH_COOKIE_SECURE = config('AUTH_COOKIE_SECURE', 'True') == 'True'
+AUTH_COOKIE_SECURE = getenv('AUTH_COOKIE_SECURE', 'True') == 'True'
 AUTH_COOKIE_HTTP_ONLY = True
 AUTH_COOKIE_PATH = '/'
 AUTH_COOKIE_SAMESITE = 'None'
 
-CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS','http://localhost:3000,http://127.0.0.1:3000').split(',')
+#Setting up socialmedia login and register(Auth)
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = getenv('GOOGLE_AUTH_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = getenv('GOOGLE_AUTH_SECRET_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'openid',
+]
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY_EXTRA_DATA = ['first_name', 'last_name']
+
+SOCIAL_AUTH_FACEBOOK_OAUTH2_KEY = getenv('FACEBOOK_AUTH_KEY')
+SOCIAL_AUTH_FACEBOOK_OAUTH2_SECRET = getenv('FACEBOOK_AUTH_SECRET_KEY')
+SOCIAL_AUTH_FACEBOOK_OAUTH2_SCOPE = ['email']
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY_EXTRA_DATA = {'fields': 'email, first_name, last_name'}
+
+
+
+CORS_ALLOWED_ORIGINS = getenv('CORS_ALLOWED_ORIGINS',
+    'http://localhost:3000,http://127.0.0.1:3000'
+    ).split(',')
 CORS_ALLOW_CREDENTIALS = True
 
 # Default primary key field type
