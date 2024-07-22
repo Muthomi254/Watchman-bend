@@ -68,6 +68,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'watchman.urls'
@@ -171,29 +172,39 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 if DEVELOPMENT_MODE is True:
-
     STATIC_URL = 'static/'
     STATIC_ROOT = BASE_DIR / 'static'
     MEDIA_URL = 'media/'
     MEDIA_ROOT = BASE_DIR / 'media'
 else:
-    AWS_S3_ACCESS_KEY_ID = getenv(' AWS_S3_ACCESS_KEY_ID')
-    AWS_S3_SECRET_ACCESS_KEY = getenv(' AWS_S3_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = getenv(' AWS_STORAGE_BUCKET_NAME')
-    AWS_S3_REGION_NAME = getenv('AWS_S3_REGION_NAME')
-    AWS_S3_ENDPOINT_URL = f'https://{AWS_S3_REGION_NAME}.digitaloceanspaces.com'
-    AWS_S3_OBJECT_PARAMETERS = {
-        'CacheControl': 'max-age=86400'
-    }
-    AWS_DEFAULT_ACL = 'public-read'
-    AWS_LOCATION = 'static'
-    AWS_S3_CUSTOM_DOMAIN = getenv('AWS_S3_CUSTOM_DOMAIN')
-    STORAGES = {
-        "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-            },
-    'staticfiles': { "storages.backends.s3boto3.S3Boto3Storage"},
-}
+    STATIC_URL = '/static/'
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# if DEVELOPMENT_MODE is True:
+
+#     STATIC_URL = 'static/'
+#     STATIC_ROOT = BASE_DIR / 'static'
+#     MEDIA_URL = 'media/'
+#     MEDIA_ROOT = BASE_DIR / 'media'
+# else:
+#     AWS_S3_ACCESS_KEY_ID = getenv(' AWS_S3_ACCESS_KEY_ID')
+#     AWS_S3_SECRET_ACCESS_KEY = getenv(' AWS_S3_SECRET_ACCESS_KEY')
+#     AWS_STORAGE_BUCKET_NAME = getenv(' AWS_STORAGE_BUCKET_NAME')
+#     AWS_S3_REGION_NAME = getenv('AWS_S3_REGION_NAME')
+#     AWS_S3_ENDPOINT_URL = f'https://{AWS_S3_REGION_NAME}.digitaloceanspaces.com'
+#     AWS_S3_OBJECT_PARAMETERS = {
+#         'CacheControl': 'max-age=86400'
+#     }
+#     AWS_DEFAULT_ACL = 'public-read'
+#     AWS_LOCATION = 'static'
+#     AWS_S3_CUSTOM_DOMAIN = getenv('AWS_S3_CUSTOM_DOMAIN')
+#     STORAGES = {
+#         "default": {
+#         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+#             },
+#     'staticfiles': { "storages.backends.s3boto3.S3Boto3Storage"},
+# }
 
 
 AUTHENTICATION_BACKENDS = [
