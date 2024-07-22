@@ -10,8 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import sys
 from os import getenv, path
 from pathlib import Path
+import dj_database_url
 from django.core.management.utils import get_random_secret_key
 import dotenv
 from decouple import config
@@ -24,6 +26,9 @@ dotenv_file = BASE_DIR / '.env.local'
 
 if path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)
+
+DEVELOPMENT_MODE = getenv("DEVELOPMENT_MODE", "False") == "True"
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -51,6 +56,7 @@ INSTALLED_APPS = [
         'rest_framework',
         'djoser',
         'users',
+        'storages',
 ]
 
 MIDDLEWARE = [
@@ -88,12 +94,21 @@ WSGI_APPLICATION = 'watchman.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
+if DEVELOPMENT_MODE is True:
+    DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
+    if getenv('DATABASE_URL', None) is None:
+        raise Exception('DATABASE_URL environment variable not defined')
+    DATABASES = {
+        'default': dj_database_url.parse(getenv('DATABASE_URL')),
+    }
+
 
 # Email settings
 
@@ -155,10 +170,30 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'static'
-MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+if DEVELOPMENT_MODE is True:
+
+    STATIC_URL = 'static/'
+    STATIC_ROOT = BASE_DIR / 'static'
+    MEDIA_URL = 'media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+else:
+    AWS_S3_ACCESS_KEY_ID = getenv(' AWS_S3_ACCESS_KEY_ID')
+    AWS_S3_SECRET_ACCESS_KEY = getenv(' AWS_S3_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = getenv(' AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_REGION_NAME = getenv('AWS_S3_REGION_NAME')
+    AWS_S3_ENDPOINT_URL = f'https://{AWS_S3_REGION_NAME}.digitaloceanspaces.com'
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400'
+    }
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_LOCATION = 'static'
+    AWS_S3_CUSTOM_DOMAIN = getenv('AWS_S3_CUSTOM_DOMAIN')
+    STORAGES = {
+        "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            },
+    'staticfiles': { "storages.backends.s3boto3.S3Boto3Storage"},
+}
 
 
 AUTHENTICATION_BACKENDS = [
@@ -211,8 +246,8 @@ SOCIAL_AUTH_FACEBOOK_OAUTH2_SECRET = getenv('FACEBOOK_AUTH_SECRET_KEY')
 SOCIAL_AUTH_FACEBOOK_OAUTH2_SCOPE = ['email']
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {'fields': 'email, first_name, last_name'}
 
-print(f"FACEBOOK_AUTH_KEY: {SOCIAL_AUTH_FACEBOOK_OAUTH2_KEY}")
-print(f"FACEBOOK_AUTH_SECRET: {SOCIAL_AUTH_FACEBOOK_OAUTH2_SECRET}")
+# print(f"FACEBOOK_AUTH_KEY: {SOCIAL_AUTH_FACEBOOK_OAUTH2_KEY}")
+# print(f"FACEBOOK_AUTH_SECRET: {SOCIAL_AUTH_FACEBOOK_OAUTH2_SECRET}")
 
 
 CORS_ALLOWED_ORIGINS = getenv('CORS_ALLOWED_ORIGINS',
