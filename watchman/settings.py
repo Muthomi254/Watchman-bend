@@ -39,7 +39,10 @@ SECRET_KEY = getenv('DJANGO_SECRET_KEY', get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+# Get the environment variable with a default value
+allowed_hosts_string = config('DJANGO_ALLOWED_HOSTS', default='127.0.0.1,localhost')
+# Convert the string to a list
+ALLOWED_HOSTS = allowed_hosts_string.split(',')
 # ALLOWED_HOSTS= "*"
 
 
