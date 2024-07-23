@@ -40,7 +40,7 @@ SECRET_KEY = getenv('DJANGO_SECRET_KEY', get_random_secret_key())
 DEBUG = getenv('DEBUG', 'False') == 'True'
 
 # Get the environment variable with a default value
-allowed_hosts_string = config('DJANGO_ALLOWED_HOSTS', default='127.0.0.1,localhost')
+allowed_hosts_string = config('DJANGO_ALLOWED_HOSTS', default='127.0.0.1,localhost, watchman-bend-9mf8g9ok1-muthomi254s-projects.vercel.app')
 # Convert the string to a list
 ALLOWED_HOSTS = allowed_hosts_string.split(',')
 # ALLOWED_HOSTS= "*"
